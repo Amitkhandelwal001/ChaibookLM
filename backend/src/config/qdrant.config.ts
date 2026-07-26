@@ -19,11 +19,19 @@ export const initQdrant = async () => {
     if (!exists) {
       await qdrantClient.createCollection(COLLECTION_NAME, {
         vectors: {
-          size: 768, // Gemini text-embedding-004 produces 768-dimensional vectors
+          size: 1536, // OpenAI text-embedding-3-small produces 1536-dimensional vectors
           distance: 'Cosine',
         },
       });
-      console.log(`Qdrant collection '${COLLECTION_NAME}' created successfully.`);
+      await qdrantClient.createPayloadIndex(COLLECTION_NAME, {
+        field_name: 'userId',
+        field_schema: 'keyword',
+      });
+      await qdrantClient.createPayloadIndex(COLLECTION_NAME, {
+        field_name: 'documentId',
+        field_schema: 'keyword',
+      });
+      console.log(`Qdrant collection '${COLLECTION_NAME}' created successfully with indices.`);
     } else {
       console.log(`Qdrant collection '${COLLECTION_NAME}' already exists.`);
     }

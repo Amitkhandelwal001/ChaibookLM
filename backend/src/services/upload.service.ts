@@ -25,21 +25,22 @@ export const processFileUpload = async (userId: string, file: Express.Multer.Fil
 
   const fileType = file.mimetype.split('/')[0] === 'image' ? 'IMAGE' : 'DOCUMENT';
 
-  let cloudinaryUrl = '';
+  let fileUrl = '';
   try {
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(file.path, {
       resource_type: 'auto',
       folder: `kitbooklm/users/${user.id}`,
     });
-    cloudinaryUrl = result.secure_url;
-  } catch (error) {
+    fileUrl = result.secure_url;
+    // Delete local temp file after successful cloud upload
     if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
-    throw new AppError('Failed to upload file to cloud storage', 500);
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    // FALLBACK: If Cloudinary fails (e.g. free tier PDF restriction), 
+    // keep the file locally so we can still extract text from it.
+    fileUrl = file.path;
   }
-
-  // Delete local temp file after successful cloud upload
-  if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
 
   // Transaction to update user storage and create document
   const document = await prisma.$transaction(async (tx) => {
@@ -47,7 +48,7 @@ export const processFileUpload = async (userId: string, file: Express.Multer.Fil
       data: {
         title: file.originalname,
         type: fileType,
-        url: cloudinaryUrl, // Store Cloudinary URL
+        url: fileUrl, // Store Cloudinary URL or local fallback path
         size: file.size,
         userId: user.id,
       },

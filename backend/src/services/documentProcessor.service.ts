@@ -22,6 +22,9 @@ export const processDocumentBackground = async (documentId: string, userId: stri
 
     if (fileExtension === 'pdf') {
       extractedText = await extractTextFromPdf(document.url);
+    } else if (fileExtension === 'docx') {
+      const { extractTextFromDocx } = require('./textExtraction.service');
+      extractedText = await extractTextFromDocx(document.url);
     } else if (['txt', 'md', 'csv'].includes(fileExtension || '')) {
       extractedText = await extractTextFromRaw(document.url);
     } else if (document.type === 'IMAGE') {
