@@ -15,6 +15,8 @@ model User {
   storageUsed Int      @default(0)
   documents   Document[]
   podcasts    Podcast[]
+  notes       Note[]
+  flashcards  Flashcard[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -28,6 +30,8 @@ model Document {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   podcasts  Podcast[]
+  notes       Note[]
+  flashcards  Flashcard[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -42,4 +46,28 @@ model Podcast {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
+}
+
+model Note {
+  id          String   @id @default(uuid())
+  title       String
+  content     String   // Markdown content
+  documentId  String
+  document    Document @relation(fields: [documentId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Flashcard {
+  id          String   @id @default(uuid())
+  question    String
+  answer      String
+  documentId  String
+  document    Document @relation(fields: [documentId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

@@ -7,6 +7,7 @@ import { DashboardPage } from './features/dashboard/pages/DashboardPage';
 import { UploadsPage } from './features/uploads/pages/UploadsPage';
 import { ChatsPage } from './features/chat/pages/ChatsPage';
 import { PodcastsPage } from './features/podcasts/pages/PodcastsPage';
+import { NotesPage } from './features/study/pages/NotesPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicRoute } from './routes/PublicRoute';
 
@@ -27,7 +28,7 @@ function App() {
             <Route path="/uploads" element={<UploadsPage />} />
             <Route path="/chats" element={<ChatsPage />} />
             <Route path="/podcasts" element={<PodcastsPage />} />
-            <Route path="/notes" element={<div className="p-8">Notes (Coming Soon)</div>} />
+            <Route path="/notes" element={<NotesPage />} />
             <Route path="/whiteboard" element={<div className="p-8">Whiteboard (Coming Soon)</div>} />
             <Route path="/calendar" element={<div className="p-8">Calendar (Coming Soon)</div>} />
             <Route path="/settings" element={<div className="p-8">Settings (Coming Soon)</div>} />
