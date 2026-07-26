@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
 import uploadRoutes from './routes/upload.routes';
 import chatRoutes from './routes/chat.routes';
+import podcastRoutes from './routes/podcast.routes';
 import { globalErrorHandler } from './middleware/error.middleware';
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/podcast', podcastRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {

@@ -6,6 +6,7 @@ import { SignupPage } from './features/auth/pages/SignupPage';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
 import { UploadsPage } from './features/uploads/pages/UploadsPage';
 import { ChatsPage } from './features/chat/pages/ChatsPage';
+import { PodcastsPage } from './features/podcasts/pages/PodcastsPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicRoute } from './routes/PublicRoute';
 
@@ -25,7 +26,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/uploads" element={<UploadsPage />} />
             <Route path="/chats" element={<ChatsPage />} />
-            <Route path="/podcasts" element={<div className="p-8">Podcasts (Coming Soon)</div>} />
+            <Route path="/podcasts" element={<PodcastsPage />} />
             <Route path="/notes" element={<div className="p-8">Notes (Coming Soon)</div>} />
             <Route path="/whiteboard" element={<div className="p-8">Whiteboard (Coming Soon)</div>} />
             <Route path="/calendar" element={<div className="p-8">Calendar (Coming Soon)</div>} />

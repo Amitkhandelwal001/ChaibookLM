@@ -9,6 +9,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const upload_routes_1 = __importDefault(require("./routes/upload.routes"));
 const chat_routes_1 = __importDefault(require("./routes/chat.routes"));
+const podcast_routes_1 = __importDefault(require("./routes/podcast.routes"));
 const error_middleware_1 = require("./middleware/error.middleware");
 const app = (0, express_1.default)();
 // Middlewares
@@ -19,6 +20,7 @@ app.use(express_1.default.json());
 app.use('/api/auth', auth_routes_1.default);
 app.use('/api/upload', upload_routes_1.default);
 app.use('/api/chat', chat_routes_1.default);
+app.use('/api/podcast', podcast_routes_1.default);
 // Health check
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'success', message: 'API is healthy' });
