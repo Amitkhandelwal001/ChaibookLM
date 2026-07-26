@@ -1,11 +1,11 @@
 import { generateEmbedding } from './embedding.service';
 import { searchVectors } from './vectorDb.service';
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai';
 import prisma from '../utils/prisma';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const openai = new OpenAI();
 
 import { Message } from '@prisma/client';
 
@@ -15,8 +15,6 @@ const getMessageHistory = async (leafMessageId: string) => {
   let currentId: string | null = leafMessageId;
 
   // We loop to reconstruct the path to the root.
-  // In a production app, recursive CTE queries or GraphQL might be better,
-  // but this while loop works for typical chat lengths.
   while (currentId) {
     const msg = (await prisma.message.findUnique({ where: { id: currentId } })) as Message | null;
     if (!msg) break;
@@ -73,34 +71,40 @@ export const generateChatResponse = async (
       .filter(Boolean)
       .join('\n\n---\n\n');
 
-    // 5. Format prompt with history
-    let historyText = '';
-    if (previousMessages.length > 0) {
-      historyText = 'Previous Conversation History:\n' + previousMessages.map(m => `${m.role}: ${m.content}`).join('\n') + '\n\n';
-    }
-
-    const prompt = `You are KitbookLM, an AI learning assistant. 
+    // 5. Format prompt with history for OpenAI messages
+    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+      {
+        role: "system",
+        content: `You are KitbookLM, an AI learning assistant. 
 Use the following pieces of retrieved context from the user's uploaded documents to answer the question.
 If the answer is not in the context, just say that you don't know based on the provided documents. 
 Do not make up an answer outside of the provided context.
 
-${historyText}
-
 Context:
-${contextChunks}
+${contextChunks}`
+      }
+    ];
 
-Current Question:
-USER: ${question}
+    for (const msg of previousMessages) {
+      messages.push({
+        role: msg.role === 'USER' ? 'user' : 'assistant',
+        content: msg.content
+      });
+    }
 
-Answer in markdown format:`;
-
-    // 6. Generate AI Response
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
+    messages.push({
+      role: "user",
+      content: question
     });
 
-    const aiContent = response.text || 'No response generated.';
+    // 6. Generate AI Response
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages,
+      temperature: 0.7,
+    });
+
+    const aiContent = response.choices[0].message.content || 'No response generated.';
 
     // 7. Save AI Message
     const aiMessage = await prisma.message.create({

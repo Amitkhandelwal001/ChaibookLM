@@ -1,9 +1,9 @@
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai';
 import prisma from '../utils/prisma';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const openai = new OpenAI();
 
 export const generateStudyMaterials = async (documentId: string, userId: string, documentText: string, sections: string[]) => {
   try {
@@ -39,12 +39,6 @@ ${documentText}`;
     const flashcardsPrompt = `You are KitbookLM, an expert AI tutor.
 I am going to provide you with a text.
 Your task is to generate exactly 10 flashcards from the most important concepts in the text.
-You MUST output the result as a strict JSON array of objects, where each object has a "question" string and an "answer" string.
-Do NOT wrap the JSON in markdown code blocks like \`\`\`json. Just output the raw JSON array.
-Example format:
-[
-  { "question": "What is X?", "answer": "X is Y." }
-]
 
 Text:
 ${documentText}`;
@@ -53,35 +47,67 @@ ${documentText}`;
     
     // Run generation
     const promises: Promise<any>[] = [
-      ai.models.generateContent({ model: 'gemini-2.5-flash', contents: notesPrompt })
+      openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: notesPrompt }],
+        temperature: 0.3,
+      })
     ];
     
     if (includeFlashcards) {
-      promises.push(ai.models.generateContent({ model: 'gemini-2.5-flash', contents: flashcardsPrompt }));
+      promises.push(
+        openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: [{ role: 'user', content: flashcardsPrompt }],
+          temperature: 0.3,
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "flashcards",
+              schema: {
+                type: "object",
+                properties: {
+                  flashcards: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        question: { type: "string" },
+                        answer: { type: "string" }
+                      },
+                      required: ["question", "answer"],
+                      additionalProperties: false
+                    }
+                  }
+                },
+                required: ["flashcards"],
+                additionalProperties: false
+              },
+              strict: true
+            }
+          }
+        })
+      );
     }
 
     const results = await Promise.all(promises);
     const notesResponse = results[0];
-    const markdownNotes = notesResponse.text || '';
+    const markdownNotes = notesResponse.choices[0].message.content || '';
     
     let flashcardInserts: any[] = [];
 
     if (includeFlashcards && results[1]) {
       const flashcardsResponse = results[1];
+      const content = flashcardsResponse.choices[0].message.content;
+      
       let flashcardsData = [];
-
-      // Parse the JSON safely
-      try {
-        let rawJson = flashcardsResponse.text || '[]';
-        // Strip markdown backticks if Gemini accidentally includes them despite instructions
-        if (rawJson.startsWith('\`\`\`json')) {
-          rawJson = rawJson.replace(/\`\`\`json\n?/, '').replace(/\`\`\`\n?$/, '');
-        } else if (rawJson.startsWith('\`\`\`')) {
-          rawJson = rawJson.replace(/\`\`\`\n?/, '').replace(/\`\`\`\n?$/, '');
+      if (content) {
+        try {
+          const parsed = JSON.parse(content);
+          flashcardsData = parsed.flashcards || [];
+        } catch (e) {
+          console.error('Failed to parse flashcards JSON:', content);
         }
-        flashcardsData = JSON.parse(rawJson);
-      } catch (e) {
-        console.error('Failed to parse flashcards JSON:', flashcardsResponse.text);
       }
 
       flashcardInserts = flashcardsData.map((card: any) => ({

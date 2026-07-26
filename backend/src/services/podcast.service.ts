@@ -1,11 +1,11 @@
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai';
 import axios from 'axios';
 import prisma from '../utils/prisma';
 import cloudinary from '../config/cloudinary.config';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const openai = new OpenAI();
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 const generatePodcastScript = async (contextText: string): Promise<string> => {
@@ -19,12 +19,13 @@ Make it around 2-3 minutes spoken (approx 400-500 words).
 Material to adapt:
 ${contextText}`;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.7,
   });
 
-  return response.text || '';
+  return response.choices[0].message.content || '';
 };
 
 const synthesizeAudio = async (text: string): Promise<Buffer> => {

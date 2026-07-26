@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { generateHighlightsHandler } from '../controllers/video.controller';
-import { authMiddleware } from '../middleware/auth.middleware';
+import { protect } from '../middleware/auth.middleware';
 
 const router = Router();
 
 // Protect video routes
-router.use(authMiddleware);
+router.use(protect);
 
 router.post('/highlights', generateHighlightsHandler);
 

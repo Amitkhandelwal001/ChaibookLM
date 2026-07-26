@@ -14,7 +14,6 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@google/genai": "^2.13.0",
     "@langchain/textsplitters": "^1.0.1",
     "@prisma/client": "^6.19.3",
     "@qdrant/js-client-rest": "^1.18.0",
