@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { generateChatResponse } from '../services/chat.service';
+import { generateChatResponse, getUserChats, getChatTree } from '../services/chat.service';
 import { asyncHandler } from '../utils/asyncHandler';
 
 export const handleChat = asyncHandler(async (req: Request, res: Response) => {
-  const { question, documentId } = req.body;
+  const { question, documentId, chatId, parentMessageId } = req.body;
   const userId = req.user?.id;
 
   if (!userId) {
@@ -14,12 +14,36 @@ export const handleChat = asyncHandler(async (req: Request, res: Response) => {
     return res.status(400).json({ status: 'fail', message: 'Question is required and must be a string.' });
   }
 
-  const answer = await generateChatResponse(question, userId, documentId);
+  const result = await generateChatResponse(question, userId, documentId, chatId, parentMessageId);
 
   res.status(200).json({
     status: 'success',
-    data: {
-      answer,
-    },
+    data: result,
+  });
+});
+
+export const fetchUserChats = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ status: 'fail', message: 'Unauthorized' });
+
+  const chats = await getUserChats(userId);
+
+  res.status(200).json({
+    status: 'success',
+    data: { chats },
+  });
+});
+
+export const fetchChatTree = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const { chatId } = req.params;
+  
+  if (!userId) return res.status(401).json({ status: 'fail', message: 'Unauthorized' });
+
+  const tree = await getChatTree(chatId as string, userId);
+
+  res.status(200).json({
+    status: 'success',
+    data: tree,
   });
 });

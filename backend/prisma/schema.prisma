@@ -17,6 +17,7 @@ model User {
   podcasts    Podcast[]
   notes       Note[]
   flashcards  Flashcard[]
+  chats       Chat[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -70,4 +71,26 @@ model Flashcard {
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  title     String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  role      String   // "USER" or "AI"
+  content   String
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    Message? @relation("MessageToMessage", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Message[] @relation("MessageToMessage")
+  createdAt DateTime @default(now())
 }
