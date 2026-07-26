@@ -18,6 +18,7 @@ model User {
   notes       Note[]
   flashcards  Flashcard[]
   chats       Chat[]
+  whiteboards Whiteboard[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -93,4 +94,14 @@ model Message {
   parent    Message? @relation("MessageToMessage", fields: [parentId], references: [id], onDelete: SetNull)
   children  Message[] @relation("MessageToMessage")
   createdAt DateTime @default(now())
+}
+
+model Whiteboard {
+  id        String   @id @default(uuid())
+  title     String
+  data      Json     // Stores the tldraw canvas state
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

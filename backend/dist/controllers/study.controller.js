@@ -6,7 +6,7 @@ const study_service_1 = require("../services/study.service");
 const AppError_1 = require("../utils/AppError");
 const qdrant_config_1 = require("../config/qdrant.config");
 exports.generateMaterials = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-    const { documentId } = req.body;
+    const { documentId, sections } = req.body;
     const userId = req.user?.id;
     if (!userId) {
         return res.status(401).json({ status: 'fail', message: 'Unauthorized' });
@@ -37,7 +37,7 @@ exports.generateMaterials = (0, asyncHandler_1.asyncHandler)(async (req, res) =>
     if (!documentText) {
         throw new AppError_1.AppError('Could not find processed text for this document.', 404);
     }
-    const result = await (0, study_service_1.generateStudyMaterials)(documentId, userId, documentText);
+    const result = await (0, study_service_1.generateStudyMaterials)(documentId, userId, documentText, sections || []);
     res.status(201).json({
         status: 'success',
         data: result,

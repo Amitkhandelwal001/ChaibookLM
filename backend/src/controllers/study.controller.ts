@@ -5,7 +5,7 @@ import { AppError } from '../utils/AppError';
 import { qdrantClient, COLLECTION_NAME } from '../config/qdrant.config';
 
 export const generateMaterials = asyncHandler(async (req: Request, res: Response) => {
-  const { documentId } = req.body;
+  const { documentId, sections } = req.body;
   const userId = req.user?.id;
 
   if (!userId) {
@@ -43,7 +43,7 @@ export const generateMaterials = asyncHandler(async (req: Request, res: Response
     throw new AppError('Could not find processed text for this document.', 404);
   }
 
-  const result = await generateStudyMaterials(documentId, userId, documentText);
+  const result = await generateStudyMaterials(documentId, userId, documentText, sections || []);
 
   res.status(201).json({
     status: 'success',

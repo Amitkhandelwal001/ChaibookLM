@@ -7,6 +7,7 @@ import chatRoutes from './routes/chat.routes';
 import podcastRoutes from './routes/podcast.routes';
 import studyRoutes from './routes/study.routes';
 import searchRoutes from './routes/search.routes';
+import whiteboardRoutes from './routes/whiteboard.routes';
 import { globalErrorHandler } from './middleware/error.middleware';
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/podcast', podcastRoutes);
 app.use('/api/study', studyRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/whiteboard', whiteboardRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {

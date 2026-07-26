@@ -9,6 +9,7 @@ import { ChatsPage } from './features/chat/pages/ChatsPage';
 import { PodcastsPage } from './features/podcasts/pages/PodcastsPage';
 import { NotesPage } from './features/study/pages/NotesPage';
 import { ExplorePage } from './features/explore/pages/ExplorePage';
+import { WhiteboardPage } from './features/whiteboard/pages/WhiteboardPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicRoute } from './routes/PublicRoute';
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="/podcasts" element={<PodcastsPage />} />
             <Route path="/notes" element={<NotesPage />} />
             <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/whiteboard" element={<WhiteboardPage />} />
             <Route path="/calendar" element={<div className="p-8">Calendar (Coming Soon)</div>} />
             <Route path="/settings" element={<div className="p-8">Settings (Coming Soon)</div>} />
           </Route>
