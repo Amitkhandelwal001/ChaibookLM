@@ -40,7 +40,7 @@ export const generateMaterials = asyncHandler(async (req: Request, res: Response
     .join('\n\n');
 
   if (!documentText) {
-    throw new AppError('Could not find processed text for this document.', 404);
+    throw new AppError('This document has not been processed yet. Please re-upload the document or wait a moment and try again.', 422);
   }
 
   const result = await generateStudyMaterials(documentId, userId, documentText, sections || []);

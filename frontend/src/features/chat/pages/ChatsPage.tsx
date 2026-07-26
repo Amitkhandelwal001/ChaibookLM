@@ -1,30 +1,38 @@
 import { useState } from 'react';
+import { MessageSquare } from 'lucide-react';
 import { ChatWindow } from '../components/ChatWindow';
 import { DocumentFilter } from '../components/DocumentFilter';
 
 export const ChatsPage = () => {
-  const [selectedDocumentId, setSelectedDocumentId] = useState<string | undefined>();
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | undefined>(undefined);
 
   return (
-    <div className="p-8 h-[calc(100vh-2rem)]">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-white">Chat with Knowledge</h1>
-        <p className="text-zinc-400 mt-2">
-          Ask questions and get answers based on your uploaded documents.
-        </p>
+    <div className="flex h-[calc(100vh-2rem)] p-4 gap-4">
+      {/* Left sidebar: Document filter */}
+      <div className="w-64 flex-shrink-0">
+        <DocumentFilter selectedId={selectedDocumentId} onSelect={setSelectedDocumentId} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100%-6rem)]">
-        {/* Document Filter Sidebar */}
-        <div className="hidden lg:block lg:col-span-1 h-full">
-          <DocumentFilter
-            selectedId={selectedDocumentId}
-            onSelect={setSelectedDocumentId}
-          />
+      {/* Main chat area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="mb-4">
+          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+            <MessageSquare className="w-6 h-6 text-primary" />
+            AI Chat
+            {selectedDocumentId && (
+              <span className="text-sm font-normal text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
+                Focused on 1 document
+              </span>
+            )}
+          </h1>
+          <p className="text-zinc-400 text-sm mt-1">
+            {selectedDocumentId
+              ? 'Chatting with a specific document.'
+              : 'Chatting with your entire knowledge base.'}
+          </p>
         </div>
 
-        {/* Main Chat Window */}
-        <div className="col-span-1 lg:col-span-3 h-full">
+        <div className="flex-1 min-h-0">
           <ChatWindow documentId={selectedDocumentId} />
         </div>
       </div>

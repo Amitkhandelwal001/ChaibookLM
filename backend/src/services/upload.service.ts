@@ -71,3 +71,22 @@ export const processFileUpload = async (userId: string, file: Express.Multer.Fil
 export const fetchUserDocuments = async (userId: string) => {
   return getDocumentsByUser(userId);
 };
+
+export const removeDocument = async (documentId: string, userId: string) => {
+  // Also delete related Qdrant vectors
+  try {
+    const { qdrantClient, COLLECTION_NAME } = require('../config/qdrant.config');
+    await qdrantClient.delete(COLLECTION_NAME, {
+      filter: {
+        must: [
+          { key: 'documentId', match: { value: documentId } },
+          { key: 'userId', match: { value: userId } },
+        ],
+      },
+    });
+  } catch (e) {
+    console.warn('Could not delete Qdrant vectors:', e);
+  }
+
+  return deleteDocument(documentId, userId);
+};

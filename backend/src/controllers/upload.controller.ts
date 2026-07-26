@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
-import { processFileUpload, fetchUserDocuments } from '../services/upload.service';
+import { processFileUpload, fetchUserDocuments, removeDocument } from '../services/upload.service';
 import { AppError } from '../utils/AppError';
 
 export const uploadFileHandler = asyncHandler(async (req: Request, res: Response) => {
@@ -26,5 +26,20 @@ export const getDocumentsHandler = asyncHandler(async (req: Request, res: Respon
   res.status(200).json({
     status: 'success',
     data: documents,
+  });
+});
+
+export const deleteDocumentHandler = asyncHandler(async (req: Request, res: Response) => {
+  // @ts-ignore
+  const userId = req.user.id;
+  const { id } = req.params;
+
+  if (!id) throw new AppError('Document ID is required', 400);
+
+  await removeDocument(id, userId);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Document deleted successfully',
   });
 });

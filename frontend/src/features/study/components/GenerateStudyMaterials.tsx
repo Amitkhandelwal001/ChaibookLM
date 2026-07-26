@@ -130,7 +130,7 @@ export const GenerateStudyMaterials = ({ onDocumentSelect, selectedDocId }: Gene
       )}
       {mutation.isError && (
         <p className="text-sm text-red-400 mt-4 text-center">
-          Failed to generate materials. Please try again.
+          {(mutation.error as any)?.response?.data?.message || 'Failed to generate materials. Please try again.'}
         </p>
       )}
     </div>

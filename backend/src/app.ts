@@ -9,6 +9,7 @@ import studyRoutes from './routes/study.routes';
 import searchRoutes from './routes/search.routes';
 import whiteboardRoutes from './routes/whiteboard.routes';
 import videoRoutes from './routes/video.routes';
+import calendarRoutes from './routes/calendar.routes';
 import { globalErrorHandler } from './middleware/error.middleware';
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/study', studyRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/whiteboard', whiteboardRoutes);
 app.use('/api/video', videoRoutes);
+app.use('/api/calendar', calendarRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {

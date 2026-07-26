@@ -19,6 +19,7 @@ model User {
   flashcards  Flashcard[]
   chats       Chat[]
   whiteboards Whiteboard[]
+  calendarEvents CalendarEvent[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -104,4 +105,16 @@ model Whiteboard {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CalendarEvent {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  date        DateTime
+  color       String   @default("#6366f1")
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

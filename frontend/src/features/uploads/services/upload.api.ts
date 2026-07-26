@@ -24,3 +24,9 @@ export const fetchDocumentsFn = async (token: string): Promise<{ status: string;
   });
   return response.data;
 };
+
+export const deleteDocumentFn = async (id: string, token: string): Promise<void> => {
+  await axios.delete(`${API_URL}/upload/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};

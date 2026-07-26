@@ -1,13 +1,13 @@
 import express from 'express';
-import { handleChat, fetchUserChats, fetchChatTree } from '../controllers/chat.controller';
+import { sendMessage, getChatHistory, getUserChats } from '../controllers/chat.controller';
 import { protect } from '../middleware/auth.middleware';
 
 const router = express.Router();
 
 router.use(protect);
 
-router.post('/', handleChat);
-router.get('/history', fetchUserChats);
-router.get('/:chatId', fetchChatTree);
+router.get('/', getUserChats);
+router.post('/message', sendMessage);
+router.get('/:chatId', getChatHistory);
 
 export default router;

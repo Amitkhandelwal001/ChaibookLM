@@ -79,7 +79,7 @@ export const GeneratePodcast = () => {
       )}
       {mutation.isError && (
         <p className="text-sm text-red-400 mt-4">
-          Failed to generate podcast. Please try again.
+          {(mutation.error as any)?.response?.data?.message || 'Failed to generate podcast. Please try again.'}
         </p>
       )}
     </div>

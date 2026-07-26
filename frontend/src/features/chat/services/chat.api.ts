@@ -3,34 +3,30 @@ import axios from 'axios';
 const API_URL = 'http://localhost:5001/api/chat';
 
 export const sendChatMessage = async (
-  question: string, 
-  token: string, 
+  content: string,
+  token: string,
   documentId?: string,
   chatId?: string,
-  parentMessageId?: string
+  parentId?: string
 ) => {
   const response = await axios.post(
-    API_URL,
-    { question, documentId, chatId, parentMessageId },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    `${API_URL}/message`,
+    { content, documentId, chatId, parentId },
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return response.data;
 };
 
-export const fetchUserChatsFn = async (token: string) => {
-  const response = await axios.get(`${API_URL}/history`, {
-    headers: { Authorization: `Bearer ${token}` }
+export const getUserChatsFn = async (token: string) => {
+  const response = await axios.get(API_URL, {
+    headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data.data.chats;
+  return response.data.data;
 };
 
-export const fetchChatTreeFn = async (chatId: string, token: string) => {
+export const getChatHistoryFn = async (chatId: string, token: string) => {
   const response = await axios.get(`${API_URL}/${chatId}`, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data.data;
 };
