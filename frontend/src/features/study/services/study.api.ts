@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/study';
+const API_URL = 'http://localhost:5001/api/study';
 
 export const generateStudyMaterialsFn = async (documentId: string, token: string, sections: string[]) => {
   const response = await axios.post(

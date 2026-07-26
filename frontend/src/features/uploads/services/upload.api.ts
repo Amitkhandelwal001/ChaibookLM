@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Document } from '../types';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 export const uploadFileFn = async (file: File, token: string): Promise<{ status: string; data: Document }> => {
   const formData = new FormData();

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/search';
+const API_URL = 'http://localhost:5001/api/search';
 
 export const globalSearchFn = async (query: string, token: string) => {
   const response = await axios.get(API_URL, {

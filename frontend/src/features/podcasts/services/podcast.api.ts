@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/podcast';
+const API_URL = 'http://localhost:5001/api/podcast';
 
 export const fetchPodcastsFn = async (token: string) => {
   const response = await axios.get(API_URL, {
