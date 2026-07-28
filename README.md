@@ -177,6 +177,6 @@ User → Whiteboards
 
 <div align="center">
 
-Built with ❤️ by [Amit Khandelwal](https://github.com/Amitkhandelwal001)
+Built with by [Amit Khandelwal](https://github.com/Amitkhandelwal001)
 
 </div>
