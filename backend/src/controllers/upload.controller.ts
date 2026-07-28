@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
-import { processFileUpload, fetchUserDocuments, removeDocument } from '../services/upload.service';
+import { processFileUpload, fetchUserDocuments, removeDocument, getDocumentUrl } from '../services/upload.service';
 import { AppError } from '../utils/AppError';
 
 export const uploadFileHandler = asyncHandler(async (req: Request, res: Response) => {
@@ -42,4 +42,28 @@ export const deleteDocumentHandler = asyncHandler(async (req: Request, res: Resp
     status: 'success',
     message: 'Document deleted successfully',
   });
+});
+
+export const viewDocumentHandler = asyncHandler(async (req: Request, res: Response) => {
+  // Support token via query param for browser window.open() calls
+  const token = req.headers.authorization?.split(' ')[1] || (req.query.token as string);
+  if (!token) throw new AppError('Unauthorized', 401);
+
+  let userId: string;
+  try {
+    const { verifyToken } = require('../utils/jwt.utils');
+    const decoded = verifyToken(token) as any;
+    userId = decoded.id;
+  } catch {
+    throw new AppError('Invalid token', 401);
+  }
+
+  const { id } = req.params;
+  const { url, isLocal } = await getDocumentUrl(id, userId);
+
+  if (isLocal) {
+    return res.sendFile(url);
+  } else {
+    return res.redirect(url);
+  }
 });

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { findUserById } from '../repositories/user.repository';
-import { createDocument, getDocumentsByUser } from '../repositories/document.repository';
+import { createDocument, getDocumentsByUser, getDocumentById, deleteDocument } from '../repositories/document.repository';
 import { AppError } from '../utils/AppError';
 import prisma from '../utils/prisma';
 import cloudinary from '../config/cloudinary.config';
@@ -72,8 +72,29 @@ export const fetchUserDocuments = async (userId: string) => {
   return getDocumentsByUser(userId);
 };
 
+export const getDocumentUrl = async (documentId: string, userId: string) => {
+  const doc = await getDocumentById(documentId, userId);
+  if (!doc) throw new AppError('Document not found', 404);
+
+  const isLocal = doc.url.startsWith('/') || doc.url.includes('/uploads/');
+  return { url: doc.url, isLocal, doc };
+};
+
 export const removeDocument = async (documentId: string, userId: string) => {
-  // Also delete related Qdrant vectors
+  // Get document first to clean up local file if needed
+  const doc = await getDocumentById(documentId, userId);
+  if (!doc) throw new AppError('Document not found', 404);
+
+  // Delete local file if it exists
+  if (doc.url && (doc.url.startsWith('/') || doc.url.includes('/uploads/'))) {
+    try {
+      if (fs.existsSync(doc.url)) fs.unlinkSync(doc.url);
+    } catch (e) {
+      console.warn('Could not delete local file:', e);
+    }
+  }
+
+  // Delete related Qdrant vectors
   try {
     const { qdrantClient, COLLECTION_NAME } = require('../config/qdrant.config');
     await qdrantClient.delete(COLLECTION_NAME, {
@@ -86,6 +107,16 @@ export const removeDocument = async (documentId: string, userId: string) => {
     });
   } catch (e) {
     console.warn('Could not delete Qdrant vectors:', e);
+  }
+
+  // Update storage used
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { storageUsed: { decrement: doc.size } },
+    });
+  } catch (e) {
+    console.warn('Could not update storage:', e);
   }
 
   return deleteDocument(documentId, userId);
