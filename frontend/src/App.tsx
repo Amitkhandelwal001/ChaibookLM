@@ -5,13 +5,12 @@ import { LoginPage } from './features/auth/pages/LoginPage';
 import { SignupPage } from './features/auth/pages/SignupPage';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
 import { UploadsPage } from './features/uploads/pages/UploadsPage';
-import { ChatsPage } from './features/chat/pages/ChatsPage';
-import { PodcastsPage } from './features/podcasts/pages/PodcastsPage';
 import { NotesPage } from './features/study/pages/NotesPage';
 import { ExplorePage } from './features/explore/pages/ExplorePage';
 import { WhiteboardPage } from './features/whiteboard/pages/WhiteboardPage';
 import { VideoHighlightsPage } from './features/video/pages/VideoHighlightsPage';
 import { CalendarPage } from './features/calendar/pages/CalendarPage';
+import { ChatbotPage } from './features/chatbot/pages/ChatbotPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicRoute } from './routes/PublicRoute';
 
@@ -30,14 +29,12 @@ function App() {
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/uploads" element={<UploadsPage />} />
-            <Route path="/chats" element={<ChatsPage />} />
-            <Route path="/podcasts" element={<PodcastsPage />} />
+            <Route path="/chat" element={<ChatbotPage />} />
             <Route path="/notes" element={<NotesPage />} />
             <Route path="/explore" element={<ExplorePage />} />
             <Route path="/whiteboard" element={<WhiteboardPage />} />
             <Route path="/video" element={<VideoHighlightsPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/settings" element={<div className="p-8">Settings (Coming Soon)</div>} />
           </Route>
         </Route>
 

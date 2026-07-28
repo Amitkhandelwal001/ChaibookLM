@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, MessageSquare, Mic, Compass, Calendar, BookOpen, Settings, LogOut, FileText, PenTool, Video } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, Compass, Calendar, BookOpen, LogOut, FileText, PenTool, Video } from 'lucide-react';
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuthStore();
@@ -10,14 +10,12 @@ export const DashboardLayout = () => {
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Uploads', href: '/uploads', icon: FileText },
-    { name: 'Chats', href: '/chats', icon: MessageSquare },
-    { name: 'Podcasts', href: '/podcasts', icon: Mic },
+    { name: 'AI Chat', href: '/chat', icon: MessageSquare },
     { name: 'Study Notes', href: '/notes', icon: BookOpen },
     { name: 'Video Highlights', href: '/video', icon: Video },
     { name: 'Explore', href: '/explore', icon: Compass },
     { name: 'Whiteboard', href: '/whiteboard', icon: PenTool },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
-    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   return (

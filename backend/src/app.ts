@@ -10,6 +10,7 @@ import searchRoutes from './routes/search.routes';
 import whiteboardRoutes from './routes/whiteboard.routes';
 import videoRoutes from './routes/video.routes';
 import calendarRoutes from './routes/calendar.routes';
+import chatbotRoutes from './routes/simpleChatbot.routes';
 import { globalErrorHandler } from './middleware/error.middleware';
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/search', searchRoutes);
 app.use('/api/whiteboard', whiteboardRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/calendar', calendarRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
